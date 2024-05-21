@@ -22,7 +22,6 @@ from src.utils import (
 )
 from src.postprocess import SegDetectorRepresenter
 
-
 H, W = 14, 12
 
 
@@ -157,26 +156,26 @@ class Inference:
         return heat_map, poly, box_list, score_list
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    config = CFG()
+class Infer:
+    def infer():
+        config = CFG()
 
-    paths = glob.glob("sample/*.*")
+        paths = glob.glob("sample/*.*")
 
-    tdd = Inference(config)
+        tdd = Inference(config)
 
-    for pth in paths:
-        # polygon plot
-        heat_map, poly, box, score = tdd(img_path=pth, poly_only=True)
-        save_pth = str(Path(pth).parent.joinpath("output"))
+        for pth in paths:
+            # polygon plot
+            heat_map, poly, box, score = tdd(img_path=pth, poly_only=True)
+            save_pth = str(Path(pth).parent.joinpath("output"))
 
-        heat_map.savefig(
-            f"{save_pth}/{str(Path(pth).stem)}_heat_map.png"
-        )
-        poly.savefig(f"{save_pth}/{str(Path(pth).stem)}_poly.png")
+            heat_map.savefig(
+                f"{save_pth}/{str(Path(pth).stem)}_heat_map.png"
+            )
+            poly.savefig(f"{save_pth}/{str(Path(pth).stem)}_poly.png")
 
-        # rectangle plot 
-        _ , poly, _ , _ = tdd(img_path=pth, poly_only=False)
-        poly.savefig(f"{save_pth}/{str(Path(pth).stem)}_rect.png")
-        
-        
+            # rectangle plot
+            _, poly, _, _ = tdd(img_path=pth, poly_only=False)
+            poly.savefig(f"{save_pth}/{str(Path(pth).stem)}_rect.png")
