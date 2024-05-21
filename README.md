@@ -57,3 +57,18 @@ Here are some key metrics from the training logs:
 
 This project is based on the work of Sweekar Dahal's [Nepali Handwriting Dataset](https://github.com/dahalsweekar/Nepali-Handwritten-Dataset-Major-Collection). Special thanks to all contributors.
 
+
+### Reference
+
+- [DBNet.pytorch](https://github.com/WenmuZhou/DBNet.pytorch), thanks to [@WenmuZhou](https://github.com/WenmuZhou)
+
+- [Real-time Scene Text Detection with Differentiable Binarization](https://arxiv.org/abs/1911.08947)
+- [Evaluation metrics](https://github.com/Megvii-CSG/MegReader/blob/master/concern/icdar2015_eval)
+- [DBNet.pytorch](https://github.com/WenmuZhou/DBNet.pytorch)
+- [DBNet.keras](https://github.com/xuannianz/DifferentiableBinarization/)
+- [Real-time-Text-Detection](https://github.com/SURFZJY/Real-time-Text-Detection)
+- [PSENet.pytorch](https://github.com/whai362/PSENet)
+- [deep-text-recognition-benchmark](https://github.com/clovaai/deep-text-recognition-benchmark)
+- [volksdep](https://github.com/Media-Smart/volksdep)
+- [TedEval](https://github.com/clovaai/TedEval)
+- [torch2trt](https://github.com/NVIDIA-AI-IOT/torch2trt)
