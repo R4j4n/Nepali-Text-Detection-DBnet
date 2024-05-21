@@ -13,37 +13,43 @@ from utils import (read_img, test_preprocess, visualize_heatmap,
                    visualize_polygon, str_to_bool)
 from postprocess import SegDetectorRepresenter
 
+class Args:
+    def load_args():
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument('--image_dir', type=str)
+        parser.add_argument('--model_path',
+                            type=str,
+                            default='./models/db_resnet18.pth')
+        parser.add_argument('--save_dir', type=str, default='./assets')
+        parser.add_argument('--device', type=str, default='cuda')
 
-def load_model(model_path, device):
-    assert os.path.exists(model_path)
-    dbnet = DBTextModel().to(device)
-    dbnet.load_state_dict(torch.load(model_path, map_location=device))
-    return dbnet
+        # for polygon & rotate rectangle
+        parser.add_argument('--thresh', type=float, default=0.3)
+        parser.add_argument('--box_thresh', type=float, default=0.5)
+        parser.add_argument('--unclip_ratio', type=float, default=1.5)
+        parser.add_argument('--is_output_polygon', type=str_to_bool, default=True)
+
+        # output
+        parser.add_argument('--preds_fp',
+                            type=str,
+                            default='./data/result_poly_preds.pkl')
+        parser.add_argument('--img_fns_fp', type=str, default='./data/img_fns.pkl')
+
+        args = parser.parse_args()
+        return args
 
 
-def load_args():
-    parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('--image_dir', type=str)
-    parser.add_argument('--model_path',
-                        type=str,
-                        default='./models/db_resnet18.pth')
-    parser.add_argument('--save_dir', type=str, default='./assets')
-    parser.add_argument('--device', type=str, default='cuda')
+class Initialize_Model:
+    def __init__(self, model_path, device):
+        self.model_path = model_path
+        self.device = device
 
-    # for polygon & rotate rectangle
-    parser.add_argument('--thresh', type=float, default=0.3)
-    parser.add_argument('--box_thresh', type=float, default=0.5)
-    parser.add_argument('--unclip_ratio', type=float, default=1.5)
-    parser.add_argument('--is_output_polygon', type=str_to_bool, default=True)
+    def load_model(self):
+        assert os.path.exists(self.model_path)
+        dbnet = DBTextModel().to(self.device)
+        dbnet.load_state_dict(torch.load(self.model_path, map_location=self.device))
+        return dbnet
 
-    # output
-    parser.add_argument('--preds_fp',
-                        type=str,
-                        default='./data/result_poly_preds.pkl')
-    parser.add_argument('--img_fns_fp', type=str, default='./data/img_fns.pkl')
-
-    args = parser.parse_args()
-    return args
 
 
 def to_list_tuples(sample):
@@ -56,7 +62,7 @@ def main(args):
     Eval for totaltext dataset
     """
 
-    dbnet = load_model(args.model_path, args.device)
+    dbnet = Initialize_Model(args.model_path, args.device).load_model()
 
     test_img_fps = sorted(glob.glob(os.path.join(args.image_dir, "*")))
 
@@ -123,5 +129,5 @@ def main(args):
 
 
 if __name__ == '__main__':
-    args = load_args()
+    args = Args.load_args()
     main(args)
