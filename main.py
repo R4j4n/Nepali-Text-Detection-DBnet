@@ -25,6 +25,7 @@ from src.utils import (
 )
 from src.postprocess import SegDetectorRepresenter
 from src.my_data_loader import ICDAR2015DatasetIter
+from inference import Infer
 
 from config import Config
 
@@ -34,13 +35,15 @@ cv2.setNumThreads(0)
 
 def arg_parser():
     parser = argparse.ArgumentParser(description='NHD Trainer')
-    parser.add_argument('--train', help='Evaluate', default='True', action='store_true')
+    parser.add_argument('--train', help='Train', default='False', action='store_true')
+    parser.add_argument('--infer', help='Inference', default='False', action='store_true')
 
     args = parser.parse_args()
 
     args = vars(args)
     args = {k: v for k, v in args.items() if v is not None}
-    main()
+    print(args)
+    Main(args['train'], args['infer']).main()
 
 
 class Dataset:
@@ -391,13 +394,25 @@ class Train:
         logger.info("Saved model")
 
 
-def main():
-    cfg = Config().config()
-    dataset_name, ignore_tags, train_dir, test_dir, train_gt_dir, test_gt_dir = Dataset(cfg).Load()
-    train_loader, test_loader = ICDAR(cfg, ignore_tags, train_dir, test_dir, train_gt_dir, test_gt_dir).icdarloader()
-    Train(cfg, train_loader, test_loader, dataset_name, ignore_tags, train_dir, test_dir, train_gt_dir,
-          test_gt_dir).main_trainer()
+class Main:
+    def __init__(self, train, infer):
+        self.train = train
+        self.infer = infer
+
+    def main(self):
+        print(self.train, self.infer)
+        if self.train:
+            print("Training...")
+            cfg = Config().config()
+            dataset_name, ignore_tags, train_dir, test_dir, train_gt_dir, test_gt_dir = Dataset(cfg).Load()
+            train_loader, test_loader = ICDAR(cfg, ignore_tags, train_dir, test_dir, train_gt_dir,
+                                              test_gt_dir).icdarloader()
+            Train(cfg, train_loader, test_loader, dataset_name, ignore_tags, train_dir, test_dir, train_gt_dir,
+                  test_gt_dir).main_trainer()
+        if self.infer:
+            print("Running Inference...")
+            Infer.infer()
 
 
 if __name__ == '__main__':
-    main()
+    arg_parser()
