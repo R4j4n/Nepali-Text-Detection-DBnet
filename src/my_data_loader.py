@@ -10,7 +10,7 @@ from torch.utils.data import Dataset, DataLoader
 import imgaug.augmenters as iaa
 import pyclipper
 
-from db_transforms import Thresh, Transform, Crop, Resize
+from .db_transforms import Thresh, Transform, Crop, Resize
 from src.utils import dict_to_device, minmax_scaler_img
 
 
