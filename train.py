@@ -25,11 +25,11 @@ from src.utils import (
 from src.postprocess import SegDetectorRepresenter
 from src.my_data_loader import ICDAR2015DatasetIter
 
-from config import cfg
+from config import Config
 
+cfg = Config.config
 warnings.filterwarnings("ignore")
 cv2.setNumThreads(0)
-
 
 dataset_name = cfg.dataset.name
 ignore_tags = cfg.data[dataset_name].ignore_tags
@@ -38,9 +38,7 @@ test_dir = cfg.data[dataset_name].test_dir
 train_gt_dir = cfg.data[dataset_name].train_gt_dir
 test_gt_dir = cfg.data[dataset_name].test_gt_dir
 
-
 TextDatasetIter = ICDAR2015DatasetIter
-
 
 train_iter = TextDatasetIter(
     train_dir,
@@ -71,7 +69,6 @@ test_loader = DataLoader(
 
 
 def main(cfg):
-
     # setup logger
     logger = setup_logger(os.path.join(cfg.meta.root_dir, cfg.logging.logger_file))
 
@@ -247,7 +244,7 @@ def main(cfg):
         raw_metrics = []
         test_visualize_index = random.choice(range(len(test_loader)))
         for test_batch_index, test_batch in tqdm(
-            enumerate(test_loader), total=len(test_loader)
+                enumerate(test_loader), total=len(test_loader)
         ):
 
             with torch.no_grad():
