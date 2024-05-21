@@ -392,9 +392,9 @@ class Train:
 
 
 def main():
-    cfg = Config.config
-    dataset_name, ignore_tags, train_dir, test_dir, train_gt_dir, test_gt_dir = Dataset(cfg).Load
-    train_loader, test_loader = ICDAR(cfg, ignore_tags, train_dir, test_dir, train_gt_dir, test_gt_dir).icdarloader
+    cfg = Config().config()
+    dataset_name, ignore_tags, train_dir, test_dir, train_gt_dir, test_gt_dir = Dataset(cfg).Load()
+    train_loader, test_loader = ICDAR(cfg, ignore_tags, train_dir, test_dir, train_gt_dir, test_gt_dir).icdarloader()
     Train(cfg, train_loader, test_loader, dataset_name, ignore_tags, train_dir, test_dir, train_gt_dir,
           test_gt_dir).main_trainer()
 
