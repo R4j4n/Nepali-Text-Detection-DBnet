@@ -10,26 +10,26 @@ from torch.utils.data import Dataset, DataLoader
 import imgaug.augmenters as iaa
 import pyclipper
 
-import src.db_transforms as db_transforms
+from db_transforms import Thresh, Transform, Crop, Resize
 from src.utils import dict_to_device, minmax_scaler_img
 
 
 class BaseDatasetIter(Dataset):
 
     def __init__(
-        self,
-        train_dir,
-        train_gt_dir,
-        ignore_tags,
-        is_training=True,
-        image_size=640,
-        min_text_size=8,
-        shrink_ratio=0.4,
-        thresh_min=0.3,
-        thresh_max=0.7,
-        augment=None,
-        mean=[103.939, 116.779, 123.68],
-        debug=False,
+            self,
+            train_dir,
+            train_gt_dir,
+            ignore_tags,
+            is_training=True,
+            image_size=640,
+            min_text_size=8,
+            shrink_ratio=0.4,
+            thresh_min=0.3,
+            thresh_max=0.7,
+            augment=None,
+            mean=[103.939, 116.779, 123.68],
+            debug=False,
     ):
 
         self.train_dir = train_dir
@@ -77,10 +77,10 @@ class BaseDatasetIter(Dataset):
         img = cv2.imread(image_path)[:, :, ::-1]
         if self.is_training and self.augment is not None:
             augment_seq = self.augment.to_deterministic()
-            img, anns = db_transforms.transform(augment_seq, img, anns)
-            img, anns = db_transforms.crop(img, anns)
+            img, anns = Transform(augment_seq, img, anns).transform
+            img, anns = Crop(img, anns).crop
 
-        img, anns = db_transforms.resize(self.image_size, img, anns)
+        img, anns = Resize(self.image_size, img, anns).resize
 
         anns = [ann for ann in anns if Polygon(ann["poly"]).buffer(0).is_valid]
         gt = np.zeros((self.image_size, self.image_size), dtype=np.float32)  # batch_gts
@@ -104,9 +104,9 @@ class BaseDatasetIter(Dataset):
 
             # generate gt and mask
             if (
-                polygon.area < 1
-                or min(height, width) < self.min_text_size
-                or ann["text"] in self.ignore_tags
+                    polygon.area < 1
+                    or min(height, width) < self.min_text_size
+                    or ann["text"] in self.ignore_tags
             ):
                 ignore_tags.append(True)
                 cv2.fillPoly(mask, poly.astype(np.int32)[np.newaxis, :, :], 0)
@@ -114,7 +114,7 @@ class BaseDatasetIter(Dataset):
             else:
                 # 6th equation
                 distance = (
-                    polygon.area * (1 - np.power(self.shrink_ratio, 2)) / polygon.length
+                        polygon.area * (1 - np.power(self.shrink_ratio, 2)) / polygon.length
                 )
                 subject = [tuple(_l) for _l in ann["poly"]]
                 padding = pyclipper.PyclipperOffset()
@@ -136,9 +136,7 @@ class BaseDatasetIter(Dataset):
                         continue
 
             # generate thresh map and thresh mask
-            db_transforms.draw_thresh_map(
-                ann["poly"], thresh_map, thresh_mask, shrink_ratio=self.shrink_ratio
-            )
+            Thresh(ann["poly"], thresh_map, thresh_mask, shrink_ratio=self.shrink_ratio).draw_thresh_map()
 
         thresh_map = thresh_map * (self.thresh_max - self.thresh_min) + self.thresh_min
 
