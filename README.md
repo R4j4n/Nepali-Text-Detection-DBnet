@@ -1,6 +1,7 @@
 
 ## Nepali Handwritten Text Detection
 
+![](sample/page.png)
 This repository contains the implementation of a text detection and localization system for Nepali handwritten text using the Differentiable Binarization Network (DBNet). The dataset used is the Nepali Handwriting Dataset (NHD) converted to the ICDAR 2015 format.
 
 ## Dataset
