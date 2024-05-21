@@ -25,7 +25,7 @@ pip install -r requirements.txt
 To train the model, first download the dataset as mentioned above. Then, run the training script:
 
 ```bash
-python train.py
+python main.py --train
 ```
 
 ## Inference
@@ -33,7 +33,7 @@ python train.py
 To perform inference on new images, use the following command:
 
 ```bash
-python inference.py
+python main.py --infer
 ```
 
 ## Configuration
