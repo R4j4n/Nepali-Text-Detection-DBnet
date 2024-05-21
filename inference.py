@@ -166,10 +166,17 @@ if __name__ == "__main__":
     tdd = Inference(config)
 
     for pth in paths:
+        # polygon plot
         heat_map, poly, box, score = tdd(img_path=pth, poly_only=True)
         save_pth = str(Path(pth).parent.joinpath("output"))
 
         heat_map.savefig(
-            f"{save_pth}/{str(Path(random.choice(paths)).stem)}_heat_map.png"
+            f"{save_pth}/{str(Path(pth).stem)}_heat_map.png"
         )
-        poly.savefig(f"{save_pth}/{str(Path(random.choice(paths)).stem)}_poly.png")
+        poly.savefig(f"{save_pth}/{str(Path(pth).stem)}_poly.png")
+
+        # rectangle plot 
+        _ , poly, _ , _ = tdd(img_path=pth, poly_only=False)
+        poly.savefig(f"{save_pth}/{str(Path(pth).stem)}_rect.png")
+        
+        
