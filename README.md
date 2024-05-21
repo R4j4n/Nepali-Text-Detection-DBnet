@@ -25,7 +25,7 @@ pip install -r requirements.txt
 To train the model, first download the dataset as mentioned above. Then, run the training script:
 
 ```bash
-python train.py --train
+python train.py
 ```
 
 ## Inference
